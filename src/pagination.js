@@ -10,12 +10,10 @@
  * @param {boolean} [paginationOptions.ellipsisOptions.showEllipsisIfOnlyOnePage = true] - Show ellipsis if only one page difference. Default is true.
  * @param {boolean} [paginationOptions.ellipsisOptions.enableEllipsisClick = true] - Enable ellipsis click, will jump to halfway between current and start/end page. Default is true.
  * @param {boolean} [paginationOptions.ellipsisOptions.enableFirstLast = true] - Enable forcing first and last pagination item to be first and last page. Default is true.
- *
- * @returns {Object} Object with `calculatePages` and `calculatePageClick` functions.
  */
 function usePagination(paginationOptions) {
-  const totalPages = paginationOptions.totalPages;
-  const lastPage = totalPages - 1;
+  let totalPages = Math.max(paginationOptions.totalPages, 1);
+  let lastPage = totalPages - 1;
 
   const maxPagesShown = paginationOptions?.maxPagesShown ?? 7;
   const middleIndex = Math.floor(maxPagesShown / 2);
@@ -30,6 +28,15 @@ function usePagination(paginationOptions) {
     paginationOptions?.ellipsisOptions?.enableEllipsisClick ?? true;
   const enableFirstLast =
     paginationOptions?.ellipsisOptions?.enableFirstLast ?? true;
+
+  /**
+   * Update the total pages and last page.
+   * @param {number} newTotalPages - The total number of pages.
+   */
+  function updateTotalPages(newTotalPages) {
+    totalPages = Math.max(newTotalPages, 1);
+    lastPage = totalPages - 1;
+  }
 
   /**
    * Calculate the pages to show based on the current page.
@@ -146,10 +153,7 @@ function usePagination(paginationOptions) {
     }
   }
 
-  return {
-    calculatePages,
-    calculatePageClick,
-  };
+  return { calculatePages, calculatePageClick, updateTotalPages };
 }
 
 export { usePagination };
